@@ -12,6 +12,16 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import UserAddress
 from .serializers import UserAddressSerializer
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from rest_framework import viewsets
+from .models import Product
+from .serializers import ProductSerializer
+
 class UserAddressView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -117,11 +127,7 @@ class VerifyOTP(APIView):
                 "username": user.username,
             }
         })
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class AdminLogin(APIView):
     permission_classes = []  #  Allow anyone
@@ -145,3 +151,8 @@ class AdminLogin(APIView):
             "success": False,
             "message": "Invalid admin credentials"
         }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by('-id')
+    serializer_class = ProductSerializer

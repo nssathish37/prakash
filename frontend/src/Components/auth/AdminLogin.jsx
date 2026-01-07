@@ -29,6 +29,7 @@ const AdminLogin = () => {
 
       if (response.data.success) {
         localStorage.setItem("access_token", response.data.token);
+        localStorage.setItem("adminToken", response.data.token);
         localStorage.setItem("is_admin", "true");
         setToken(response.data.token);
         setIsAuth(true);

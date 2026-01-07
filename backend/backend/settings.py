@@ -28,14 +28,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'corsheaders',
-    'rest_framework_simplejwt',
-    
 
-
-
-    'accounts.apps.AccountsConfig',
-
+    'accounts.apps.AccountsConfig',  # changed
+    'products.apps.ProductsConfig',  # changed
 ]
 
 MIDDLEWARE = [
@@ -147,3 +142,8 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+from pathlib import Path
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

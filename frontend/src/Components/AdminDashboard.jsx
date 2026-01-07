@@ -24,6 +24,9 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const token = localStorage.getItem("adminToken");
+
   
   // --- 3. UI STATES ---
   const [showModal, setShowModal] = useState(false);
@@ -61,12 +64,26 @@ export default function AdminDashboard() {
   ];
   const COLORS = ['#10b981', '#f59e0b', '#6366f1'];
 
-  useEffect(() => {
-    // Load products and simulate API fetch
-    const data = Array.isArray(allProductsData) ? allProductsData : Object.values(allProductsData).flat();
-    setProducts(data);
-    setLoading(false);
-  }, []);
+   useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/products/");
+
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const data = await res.json();
+      setProducts(data);
+      setLoading(false);
+
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+      setProducts([]);
+    }
+  };
+
+  fetchProducts();
+}, []);
+
 
   // --- 5. LOGIC HELPERS ---
   const stats = useMemo(() => {
@@ -83,6 +100,95 @@ export default function AdminDashboard() {
     p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+   const handleSaveProduct = async (e) => {
+  e.preventDefault();
+
+  try {
+    const token = localStorage.getItem("adminToken");
+    if (!token) return alert("Admin not logged in");
+
+    const url = isEditing
+      ? `http://localhost:8000/api/products/${formData.id}/`
+      : "http://localhost:8000/api/products/";
+
+    const method = isEditing ? "PUT" : "POST";
+
+    // ✅ CREATE FORMDATA
+    const form = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== null && formData[key] !== undefined) {
+        form.append(key, formData[key]);
+      }
+    });
+
+    const res = await fetch(url, {
+      method,
+      headers: {
+        Authorization: `Token ${token}`, // ❗ DO NOT SET Content-Type
+      },
+      body: form,
+    });
+
+    if (!res.ok) throw new Error("Save failed");
+
+    const savedProduct = await res.json();
+
+    setProducts((prev) =>
+      isEditing
+        ? prev.map((p) => (p.id === savedProduct.id ? savedProduct : p))
+        : [savedProduct, ...prev]
+    );
+
+    setShowModal(false);
+    setIsEditing(false);
+
+    alert(isEditing ? "✏️ Product updated" : "✅ Product added");
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error saving product");
+  }
+};
+
+
+
+const handleDeleteProduct = async (id) => {
+  if (!window.confirm("❗ Delete this product?")) return;
+
+  try {
+    const token = localStorage.getItem("adminToken");
+
+    const res = await fetch(`http://localhost:8000/api/products/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Delete failed");
+
+    // 🔥 Remove from UI instantly
+    setProducts(prev => prev.filter(p => p.id !== id));
+
+    alert("🗑️ Product deleted successfully");
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to delete product");
+  }
+};
+
+const handleEditClick = (product) => {
+  setFormData({
+    ...product,
+  });
+  setIsEditing(true);
+  setShowModal(true);
+};
+
+
+
 
 const handleLogout = () => {
   if(window.confirm("Logout from system?")) setIsAuthenticated(false);
@@ -260,7 +366,7 @@ const handleLogout = () => {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => { setFormData({ name: "", category: "", price: "", image_url: "", in_stock: true }); setIsEditing(false); setShowModal(true); }} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
+                  <button onClick={() => { setFormData({ name: "", category: "", price: "", image_url: null, in_stock: true }); setIsEditing(false); setShowModal(true); }} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
                     <Plus size={18}/> Add Item
                   </button>
                 </div>
@@ -301,8 +407,18 @@ const handleLogout = () => {
                         </td>
                         <td className="px-8 py-5 text-right">
                           <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"><Edit3 size={16}/></button>
-                            <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"><Trash2 size={16}/></button>
+                              <button
+                                onClick={() => handleEditClick(p)}
+                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
+                              >
+                                <Edit3 size={16}/>
+                              </button>
+                                <button
+                                  onClick={() => handleDeleteProduct(p.id)}
+                                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                                >
+                                <Trash2 size={16}/>
+                              </button>                       
                           </div>
                         </td>
                       </tr>
@@ -331,7 +447,7 @@ const handleLogout = () => {
         </button>
       </div>
 
-      <form className="p-8 max-h-[70vh] overflow-y-auto space-y-6 custom-scrollbar">
+      <form  onSubmit={handleSaveProduct} className="p-8 max-h-[70vh] overflow-y-auto space-y-6 custom-scrollbar ">
         {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
@@ -394,15 +510,40 @@ const handleLogout = () => {
               value={formData.created_at} onChange={(e) => setFormData({...formData, created_at: e.target.value})} />
           </div>
         </div>
+<div className="space-y-1">
+  <label className="text-[10px] font-black uppercase text-slate-400 ml-1">
+    Product Image
+  </label>
 
-        <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Image URL</label>
-          <div className="flex gap-2">
-            <input className="flex-1 rounded-xl bg-slate-100 border-none p-3 text-sm font-bold" placeholder="https://..." 
-              value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})} />
-            {formData.image_url && <img src={formData.image_url} className="w-11 h-11 rounded-lg object-cover border" alt="preview" />}
-          </div>
-        </div>
+  <div className="flex items-center gap-3">
+    {/* File Input */}
+    <input
+      type="file"
+      accept="image/*"
+      className="flex-1 rounded-xl bg-slate-100 border-none p-3 text-sm font-bold cursor-pointer"
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          image: e.target.files[0], // 👈 FILE OBJECT
+        })
+      }
+    />
+
+    {/* Preview */}
+    {formData.image && (
+      <img
+        src={
+          typeof formData.image === "string"
+            ? `http://localhost:8000${formData.image}` // edit mode
+            : URL.createObjectURL(formData.image) // new upload
+        }
+        className="w-11 h-11 rounded-lg object-cover border"
+        alt="preview"
+      />
+    )}
+  </div>
+</div>
+
 
         <div className="flex items-center justify-between p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
           <div className="flex items-center gap-3">

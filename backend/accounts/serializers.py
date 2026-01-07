@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import UserProfile
-from .models import UserAddress
+from .models import UserProfile, UserAddress, Product  # <-- Add Product here
 
+# ----- User Serializers -----
 class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     class Meta:
@@ -24,3 +24,9 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+# ----- Product Serializer -----
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = "__all__"
