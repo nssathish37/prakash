@@ -1,0 +1,184 @@
+{
+  "products": [
+    {
+      "_id": "1",
+      "product_title": "Samsung 50\" LED Smart TV",
+      "price": 39990,
+      "product_image": ["https://m.media-amazon.com/images/I/71LJJrKbezL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.5,
+      "reviews": 1200,
+      "category": "television"
+    },
+    {
+      "_id": "2",
+      "product_title": "LG 7kg Front Load Washing Machine",
+      "price": 28990,
+      "product_image": ["https://m.media-amazon.com/images/I/71uF9WzQ5BL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.4,
+      "reviews": 850,
+      "category": "washing-machine"
+    },
+    {
+      "_id": "3",
+      "product_title": "IFB 30L Convection Microwave Oven",
+      "price": 14990,
+      "product_image": ["https://m.media-amazon.com/images/I/71wXQ5cUQCL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.3,
+      "reviews": 540,
+      "category": "microwave"
+    },
+    {
+      "_id": "4",
+      "product_title": "Whirlpool Refrigerator 300L",
+      "price": 35990,
+      "product_image": ["https://m.media-amazon.com/images/I/71he4sKoUKL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.6,
+      "reviews": 600,
+      "category": "refrigerator"
+    },
+    {
+      "_id": "5",
+      "product_title": "Sony HT-S20R Home Theatre",
+      "price": 19990,
+      "product_image": ["https://m.media-amazon.com/images/I/71e6f8cZ5TL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.7,
+      "reviews": 980,
+      "category": "home-theatre"
+    },
+    {
+      "_id": "6",
+      "product_title": "Prestige Induction Cooktop",
+      "price": 2999,
+      "product_image": ["https://m.media-amazon.com/images/I/61YFhN8xZ9L._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.2,
+      "reviews": 1100,
+      "category": "kitchen"
+    },
+    {
+      "_id": "7",
+      "product_title": "Philips Mixer Grinder 750W",
+      "price": 4999,
+      "product_image": ["https://m.media-amazon.com/images/I/61VJ9bB8YLL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.4,
+      "reviews": 760,
+      "category": "kitchen"
+    },
+    {
+      "_id": "8",
+      "product_title": "Samsung 8kg Top Load Washing Machine",
+      "price": 22990,
+      "product_image": ["https://m.media-amazon.com/images/I/71G4fN2C5GL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.3,
+      "reviews": 890,
+      "category": "washing-machine"
+    },
+    {
+      "_id": "9",
+      "product_title": "LG 260L Double Door Refrigerator",
+      "price": 30990,
+      "product_image": ["https://m.media-amazon.com/images/I/71Zf9uUp+GL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.5,
+      "reviews": 720,
+      "category": "refrigerator"
+    },
+    {
+      "_id": "10",
+      "product_title": "Mi 43\" Android Smart TV",
+      "price": 25999,
+      "product_image": ["https://m.media-amazon.com/images/I/71f3u9s4+TL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.4,
+      "reviews": 1500,
+      "category": "television"
+    },
+    {
+      "_id": "11",
+      "product_title": "Bosch Dishwasher 13 Place Settings",
+      "price": 52990,
+      "product_image": ["https://m.media-amazon.com/images/I/61mZz0g6kLL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.6,
+      "reviews": 420,
+      "category": "dishwasher"
+    },
+    {
+      "_id": "12",
+      "product_title": "Voltas 1.5 Ton Split AC",
+      "price": 34990,
+      "product_image": ["https://m.media-amazon.com/images/I/61c0J1QhRBL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.3,
+      "reviews": 1100,
+      "category": "air-conditioner"
+    },
+    {
+      "_id": "13",
+      "product_title": "Daikin 1.5 Ton Inverter AC",
+      "price": 41990,
+      "product_image": ["https://m.media-amazon.com/images/I/61L1nD3S9YL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.6,
+      "reviews": 980,
+      "category": "air-conditioner"
+    },
+    {
+      "_id": "14",
+      "product_title": "Boat Rockerz 450 Headphones",
+      "price": 1499,
+      "product_image": ["https://m.media-amazon.com/images/I/61u1VALn6JL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.1,
+      "reviews": 5200,
+      "category": "audio"
+    },
+    {
+      "_id": "15",
+      "product_title": "JBL Flip 5 Bluetooth Speaker",
+      "price": 8999,
+      "product_image": ["https://m.media-amazon.com/images/I/71XkzMZ8QKL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.6,
+      "reviews": 2400,
+      "category": "audio"
+    },
+    {
+      "_id": "16",
+      "product_title": "Canon PIXMA Inkjet Printer",
+      "price": 4599,
+      "product_image": ["https://m.media-amazon.com/images/I/61wL4G6J+DL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.2,
+      "reviews": 1300,
+      "category": "printer"
+    },
+    {
+      "_id": "17",
+      "product_title": "HP 15s Laptop (i5, 8GB RAM)",
+      "price": 58990,
+      "product_image": ["https://m.media-amazon.com/images/I/71vFKBpKakL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.4,
+      "reviews": 780,
+      "category": "laptop"
+    },
+    {
+      "_id": "18",
+      "product_title": "Dell Inspiron 14 Laptop",
+      "price": 62990,
+      "product_image": ["https://m.media-amazon.com/images/I/71hI6E9s9XL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.5,
+      "reviews": 640,
+      "category": "laptop"
+    },
+    {
+      "_id": "19",
+      "product_title": "Samsung Galaxy A14 5G",
+      "price": 13999,
+      "product_image": ["https://m.media-amazon.com/images/I/61N9uB6wGLL._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.3,
+      "reviews": 3100,
+      "category": "mobile"
+    },
+    {
+      "_id": "20",
+      "product_title": "Apple iPhone 14",
+      "price": 79999,
+      "product_image": ["https://m.media-amazon.com/images/I/61bK6PMOC3L._AC_UF350,350_QL80_.jpg"],
+      "rating": 4.7,
+      "reviews": 5200,
+      "category": "mobile"
+    }
+  ]
+}

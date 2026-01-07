@@ -1,0 +1,144 @@
+{
+  "products": [
+    {
+      "_id": "1",
+      "product_title": "Samsung 80 cm (32 inch) LED HD Ready Smart TV",
+      "price": 8690,
+      "originalPrice": 13990,
+      "product_image": ["https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 1200,
+      "category": "television"
+    },
+    {
+      "_id": "2",
+      "product_title": "Croma 80 cm (32 inch) HD LED Google TV Dolby Audio",
+      "price": 9990,
+      "originalPrice": 19000,
+      "product_image": ["https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=400&h=400&fit=crop"],
+      "rating": 5,
+      "reviews": 850,
+      "category": "television"
+    },
+    {
+      "_id": "3",
+      "product_title": "Apple iPhone 15 (Black, 128 GB)",
+      "price": 79990,
+      "originalPrice": 89900,
+      "product_image": ["https://images.unsplash.com/photo-1695048133142-1a20484d256e?q=80&w=400&h=400&fit=crop"],
+      "rating": 5,
+      "reviews": 3400,
+      "category": "mobiles"
+    },
+    {
+      "_id": "4",
+      "product_title": "Whirlpool 300L 3 Star Refrigerator",
+      "price": 35990,
+      "originalPrice": 42000,
+      "product_image": ["https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 600,
+      "category": "refrigerator"
+    },
+    {
+      "_id": "5",
+      "product_title": "Sony WH-1000XM5 Wireless Noise Cancelling Headphones",
+      "price": 29990,
+      "originalPrice": 34990,
+      "product_image": ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&h=400&fit=crop"],
+      "rating": 5,
+      "reviews": 2100,
+      "category": "accessories"
+    },
+    {
+      "_id": "6",
+      "product_title": "HP Laptop 15s, AMD Ryzen 3, 8GB RAM, 512GB SSD",
+      "price": 32490,
+      "originalPrice": 47000,
+      "product_image": ["https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 450,
+      "category": "laptops"
+    },
+    {
+      "_id": "7",
+      "product_title": "OnePlus Nord CE 3 Lite 5G (8GB RAM, 128GB)",
+      "price": 17499,
+      "originalPrice": 19999,
+      "product_image": ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 980,
+      "category": "mobiles"
+    },
+    {
+      "_id": "8",
+      "product_title": "LG 7kg 5 Star Fully Automatic Washing Machine",
+      "price": 24990,
+      "originalPrice": 31000,
+      "product_image": ["https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 1100,
+      "category": "washing-machine"
+    },
+    {
+      "_id": "9",
+      "product_title": "Canon EOS R100 Mirrorless Camera with Lens",
+      "price": 44990,
+      "originalPrice": 52000,
+      "product_image": ["https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 320,
+      "category": "camera"
+    },
+    {
+      "_id": "10",
+      "product_title": "Apple iPad Air (5th Gen) Wi-Fi 64GB",
+      "price": 54900,
+      "originalPrice": 59900,
+      "product_image": ["https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=400&h=400&fit=crop"],
+      "rating": 5,
+      "reviews": 1500,
+      "category": "tablets"
+    },
+    {
+      "_id": "11",
+      "product_title": "Boat Airdopes 141 Bluetooth TWS Earbuds",
+      "price": 1299,
+      "originalPrice": 4490,
+      "product_image": ["https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 5000,
+      "category": "accessories"
+    },
+    {
+      "_id": "12",
+      "product_title": "Samsung Galaxy Watch 6 Bluetooth (44mm)",
+      "price": 21999,
+      "originalPrice": 33999,
+      "product_image": ["https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 750,
+      "category": "wearables"
+    },
+    {
+      "_id": "13",
+      "product_title": "Dell Vostro 3510 Laptop, i5-11th Gen, 16GB RAM",
+      "price": 48990,
+      "originalPrice": 62000,
+      "product_image": ["https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 210,
+      "category": "laptops"
+    },
+    {
+      "_id": "14",
+      "product_title": "Bajaj 20L Grill Microwave Oven",
+      "price": 6490,
+      "originalPrice": 9500,
+      "product_image": ["https://images.unsplash.com/photo-1574362848149-11496d93a7c7?q=80&w=400&h=400&fit=crop"],
+      "rating": 4,
+      "reviews": 1400,
+      "category": "kitchen"
+    }
+  ]
+}

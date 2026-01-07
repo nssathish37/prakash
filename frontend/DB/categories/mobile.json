@@ -1,0 +1,46 @@
+[
+  {
+    "_id": "1",
+    "product_title": "Samsung Galaxy A14 5G",
+    "price": 15999,
+    "product_image": [
+      "/src/assets/images/demo.png"
+    ],
+    "rating": 4.3,
+    "reviews": 1250,
+    "category": "mobiles"
+  },
+  {
+    "_id": "2",
+    "product_title": "Redmi Note 12 Pro",
+    "price": 18999,
+    "product_image": [
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97"
+    ],
+    "rating": 4.5,
+    "reviews": 2450,
+    "category": "mobiles"
+  },
+  {
+    "_id": "3",
+    "product_title": "Realme Narzo 60 5G",
+    "price": 17999,
+    "product_image": [
+      "https://images.unsplash.com/photo-1585060544812-6b45742d762f"
+    ],
+    "rating": 4.2,
+    "reviews": 980,
+    "category": "mobiles"
+  },
+  {
+    "_id": "4",
+    "product_title": "iQOO Z7 5G",
+    "price": 16999,
+    "product_image": [
+      "https://images.unsplash.com/photo-1604671368394-2240d0b1bb6c"
+    ],
+    "rating": 4.4,
+    "reviews": 1420,
+    "category": "mobiles"
+  }
+]
