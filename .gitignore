@@ -6,8 +6,7 @@ venv/
 __pycache__/
 *.pyc
 
-# Django
-media/
+
 
 # Node
 node_modules/
