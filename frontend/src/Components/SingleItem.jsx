@@ -1,39 +1,36 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { useParams, Link , useNavigate} from "react-router-dom";
-import { ContextProvider } from "../Context/Context"; // Restored Context
-// import { SERVER_URL } from "../App"; // Assuming you want to use your config URL
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ContextProvider } from "../Context/Context";
 
 const SingleItem = () => {
   const { id } = useParams();
-  
   const navigate = useNavigate();
+
   // State management
   const [product, setProduct] = useState(null);
   const [activeImage, setActiveImage] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Get token and URL from context (as per your old code)
-  const { token } = useContext(ContextProvider);
+  // Get token from context
+  const { token, addToCart: contextAddToCart } = useContext(ContextProvider);
 
   // 🔹 FETCH PRODUCT FROM MYSQL BACKEND
   const fetchSingleProduct = async () => {
     try {
       setLoading(true);
-      // Using the local MySQL endpoint you provided in 'new'
       const res = await axios.get(`http://localhost:8000/api/products/${id}/`);
       
       const productData = res.data;
       setProduct(productData);
 
-      // Set initial active image logic
+      // Set initial active image
       const firstImage = Array.isArray(productData.product_image)
         ? productData.product_image[0]
         : productData.image;
       
       setActiveImage(firstImage);
 
-      // Optional: Store category for recommendations (from old code)
       if (productData.category) {
         localStorage.setItem("category", productData.category);
       }
@@ -45,42 +42,30 @@ const SingleItem = () => {
     }
   };
 
-  // 🔹 ADD TO CART FUNCTION (Restored from Old)
-  const addToCart = async () => {
-    if (!token) {
-      alert("Please login to add items to cart");
-      return;
-    }
-
-    try {
-      const res = await axios.post(
-        "https://croma-server.onrender.com/add-to-cart", // Keeping your production cart URL
-        {
-          productId: id,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.data.success) {
-        alert("Product added to cart ✅");
-      } else {
-        alert("Failed to add to cart ❌");
-      }
-    } catch (error) {
-      console.error("Add to cart error:", error);
-      alert("Something went wrong 😕");
-    }
-  };
-
   useEffect(() => {
     fetchSingleProduct();
     window.scrollTo(0, 0);
   }, [id]);
+
+  // 🔹 ADD TO CART (Uses Context Logic)
+  const handleAddToCart = () => {
+    if (product) {
+      contextAddToCart(product);
+    }
+  };
+
+  // 🔹 BUY NOW (Fix applied here)
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    navigate("/payment", {
+      state: {
+        items: [{ ...product, qty: 1 }], // ✅ Send as an array of 1 item
+        total: product.price,            // ✅ Send the total price
+        source: "buy_now"                // Optional flag
+      }
+    });
+  };
 
   if (loading || !product) {
     return (
@@ -161,35 +146,32 @@ const SingleItem = () => {
             </div>
 
             <div className="flex flex-col gap-1">
-			<div className="flex items-end gap-3">
-				{/* ACTUAL PRICE */}
-				<h2 className="text-4xl font-bold text-white">
-				₹{Number(price).toLocaleString("en-IN")}
-				</h2>
-
-				{/* DELETED / MRP PRICE */}
-				<span className="text-lg text-zinc-500 line-through">
-				₹{Math.round(price * 1.2).toLocaleString("en-IN")}
-				</span>
-			</div>
-
-			{/* INACTIVE DESCRIPTION */}
-			<p className="text-xs text-zinc-500">
-				Inclusive of all taxes · Limited time offer
-			</p>
-			</div>
-
+              <div className="flex items-end gap-3">
+                <h2 className="text-4xl font-bold text-white">
+                  ₹{Number(price).toLocaleString("en-IN")}
+                </h2>
+                <span className="text-lg text-zinc-500 line-through">
+                  ₹{Math.round(price * 1.2).toLocaleString("en-IN")}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500">
+                Inclusive of all taxes · Limited time offer
+              </p>
+            </div>
 
             {/* ACTION BUTTONS */}
             <div className="flex gap-4">
-             <button 
-			onClick={() => navigate("/payment", { state: { product } })}
-			className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black py-3 rounded-xl font-bold transition-colors"
-			>
-			Buy Now
-			</button>
+              
+              {/* ✅ FIXED BUY NOW BUTTON */}
               <button
-                onClick={addToCart}
+                onClick={handleBuyNow}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black py-3 rounded-xl font-bold transition-colors"
+              >
+                Buy Now
+              </button>
+
+              <button
+                onClick={handleAddToCart}
                 disabled={!in_stock}
                 className={`flex-1 py-3 rounded-xl border font-semibold transition-all ${
                   in_stock 
