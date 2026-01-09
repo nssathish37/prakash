@@ -5,3 +5,4 @@ router = DefaultRouter()
 router.register(r"", ProductViewSet, basename="products")
 
 urlpatterns = router.urls
+

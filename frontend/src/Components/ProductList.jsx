@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import demoProducts from "../../../DB/categories/mobile.json";
+import demoProducts from "../../DB/categories/mobile.json";
 
 const AllProducts = () => {
   const [data, setData] = useState([]);
@@ -23,11 +23,11 @@ const AllProducts = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5 md:gap-6 bg-zinc-800 md:bg-transparent">
           {data.map((product) => (
            <Link
-  key={product._id}
-  to={`/product/${product._id}`}
-  state={{ product }} //  FULL PRODUCT OBJECT
-  className="group bg-zinc-900 md:rounded-2xl overflow-hidden hover:bg-zinc-800/50 transition-all duration-300 md:border md:border-zinc-800 md:hover:border-zinc-600"
->
+            key={product._id}
+            to={`/product/${product._id}`}
+            state={{ product }} //  FULL PRODUCT OBJECT
+            className="group bg-zinc-900 md:rounded-2xl overflow-hidden hover:bg-zinc-800/50 transition-all duration-300 md:border md:border-zinc-800 md:hover:border-zinc-600"
+          >
 
               {/* Layout Switch: Row on Mobile (flex-row), Column on Desktop (md:flex-col) */}
               <div className="flex flex-row md:flex-col h-full">

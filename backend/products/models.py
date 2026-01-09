@@ -11,6 +11,8 @@ class Product(models.Model):
     rating = models.FloatField(default=0)
     reviews_count = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    is_best_product = models.BooleanField(default=False) 
+
     created_at = models.DateField(auto_now_add=True)
 
     # ⭐ THIS IS IMPORTANT

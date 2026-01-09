@@ -10,28 +10,42 @@ import UserAddress from "../Components/auth/UserAddress";
 import AddAddress from "../Components/auth/AddAddress";
 import Login from "../Components/auth/Login";
 
-import Cart from "../Components/Cart";
-import Mobile from "../Components/Product/Mobile";
-import Dashboard from "../Components/AdminDashboard";
 import AdminLogin from "../Components/auth/AdminLogin";
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import About from "../pages/About"
+import Dashboard from "../Components/AdminDashboard";
+import About from "../pages/About";
+
+import ProductList from '../Components/ProductList'
+
+import BrandProducts from "../Components/BrandProducts";
+import CategoryProducts from "../Components/CategoryProducts";
+import Payment from "../Components/Payment" ;
+ 
+import Wishlist from "../pages/Wishlist";
+import Cart from "../pages/Cart";
 
 
 const AllRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+
+      {/* HOME */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/mobile" element={<Mobile />} />
-
-      {/* Product Routes */}
-      <Route path="/:category" element={<ProductPage />} />
-      <Route path="/product/:_id" element={<SingleItem />} />
       <Route path="/about" element={<About />} />
+      <Route path="/productlist" element={<ProductList />} />
+      <Route path="/payment" element={<Payment />} />
+      <Route path="/wishlist" element={<Wishlist />} />
+      <Route path="/cart" element={<Cart/>} />
 
-      {/* Protected User Routes */}
+      {/* PRODUCTS */}
+      <Route path="/product/:id" element={<SingleItem />} />
+      <Route path="/brand/:brandName" element={<BrandProducts />} />
+      <Route path="/products/:category" element={<CategoryProducts />} />
+     
+
+         
+      {/* USER */}
       <Route
         path="/profile"
         element={
@@ -68,16 +82,17 @@ const AllRoutes = () => {
         }
       />
 
-      {/* Admin */}
+      {/* ADMIN */}
       <Route path="/admin-login" element={<AdminLogin />} />
-        <Route
-    path="/dashboard"
-    element={
-      <AdminProtectedRoute>
-        <Dashboard />
-    </AdminProtectedRoute>
-  }
-/>
+      <Route
+        path="/dashboard"
+        element={
+          <AdminProtectedRoute>
+            <Dashboard />
+          </AdminProtectedRoute>
+        }
+      />
+
     </Routes>
   );
 };

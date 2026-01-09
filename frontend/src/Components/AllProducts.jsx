@@ -1,54 +1,197 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { SERVER_URL } from "../App";
-import ProductCard from "./ProductCard";
+import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import { ContextProvider } from "../Context/Context"; // 1. Import Context
 
 const AllProducts = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  // 2. Get Context Functions
+  const { addToCart, addToWishlist } = useContext(ContextProvider);
+
+ useEffect(() => {
+  const fetchBestProducts = async () => {
     try {
-      const res = await axios.get(`${SERVER_URL}/products`);
-      setData(res.data.data);
+      const res = await fetch(
+        "http://localhost:8000/api/products/best/"
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch best products");
+
+      const result = await res.json();
+      setData(result);
+
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching best products:", error);
+      setData([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  fetchBestProducts();
+}, []);
+
+  // 4. Handlers (Stop propagation so clicking button doesn't open product page)
+  const handleAddToWishlist = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToWishlist(product);
+  };
+
+  const handleAddToCart = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product);
+  };
+
+  if (loading) return null; // Or a loading spinner
+  if (data.length === 0) return null; // Hide section if no best products
 
   return (
-    <div className="container mx-auto my-10 px-4">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-wide">
-          Our Best Products
-        </h1>
-      
-      </div>
+    <>
+      {/* CSS for hiding scrollbar */}
+      <style>
+        {`
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+        `}
+      </style>
 
-      {/* Horizontal Scrollable Row */}
-      <div
-        className="
-          flex 
-          overflow-x-auto 
-          gap-4 
-          pb-6 
-          snap-x 
-          snap-mandatory 
-          scrollbar-hide
-        "
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {data.map((product, index) => (
-          <div key={product._id || index} className="snap-start shrink-0">
-            <ProductCard {...product} />
-          </div>
-        ))}
+      <div className="container mx-auto my-10 px-4">
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold tracking-tight text-white uppercase">
+            Our <span className="text-emerald-400">Best Products</span>
+          </h2>
+        </div>
+
+        {/* HORIZONTAL SCROLL CONTAINER */}
+        <div className="flex gap-3 sm:gap-6 overflow-x-auto no-scrollbar pb-4">
+          {data.map((product) => {
+            const {
+              id,
+              name,
+              price,
+              rating = 0,
+              image,
+              description,
+            } = product;
+
+            return (
+              <div key={id} className="relative group shrink-0 snap-start">
+                <Link to={`/product/${id}`}>
+                  {/* CARD CONTAINER */}
+                  <div className="relative w-[165px] sm:w-64 bg-[#121212] border border-white/5 rounded-xl sm:rounded-2xl p-2 sm:p-4 hover:bg-white/10 transition-all flex flex-col min-h-[280px] sm:min-h-[400px]">
+                    
+                    {/* OVERLAY BUTTONS (Wishlist & Cart) */}
+                    <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
+                      
+                      {/* Wishlist Button */}
+                      <button
+                        onClick={(e) => handleAddToWishlist(e, product)}
+                        className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-red-500 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
+                        title="Add to Wishlist"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className="w-4 h-4 sm:w-5 sm:h-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>
+
+                      {/* Cart Button */}
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-emerald-600 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
+                        title="Add to Cart"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className="w-4 h-4 sm:w-5 sm:h-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* IMAGE */}
+                    <div className="h-32 sm:h-52 flex items-center justify-center mb-2 sm:mb-4">
+                      {image && (
+                        <img
+                          src={image}
+                          alt={name}
+                          className="max-h-full object-contain transition-transform group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+
+                    {/* DETAILS */}
+                    <div className="flex flex-col gap-1 sm:gap-2">
+                      <h1 className="text-[12px] sm:text-[15px] font-medium line-clamp-2 text-white/90">
+                        {name}
+                      </h1>
+
+                      {/* PRICE */}
+                      <span className="text-sm sm:text-xl font-bold text-white">
+                        ₹{Number(price).toLocaleString("en-IN")}
+                      </span>
+
+                      {/* RATING */}
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                              i < Math.floor(rating)
+                                ? "text-green-500 fill-green-500"
+                                : "text-gray-600 fill-gray-600"
+                            }`}
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+
+                      {/* DESCRIPTION (First 3 lines bullet points) */}
+                      {description && (
+                        <ul className="flex flex-col gap-1 mt-2">
+                          {description
+                            .split("\n")
+                            .slice(0, 3)
+                            .map((line, index) => (
+                              <li
+                                key={index}
+                                className="text-[11px] text-zinc-400 flex items-start gap-2"
+                              >
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1"></span>
+                                {line}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

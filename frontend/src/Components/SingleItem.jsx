@@ -1,147 +1,239 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button } from "@chakra-ui/react";
-import { ContextProvider } from "../Context/Context";
-import { SERVER_URL } from "../App";
-import Loading from "./Loading";
+import { useParams, Link , useNavigate} from "react-router-dom";
+import { ContextProvider } from "../Context/Context"; // Restored Context
+// import { SERVER_URL } from "../App"; // Assuming you want to use your config URL
 
 const SingleItem = () => {
-	const { _id } = useParams();
-	const [singleProduct, setSingleProduct] = useState(null);
-	const [singleImage, setSingleImage] = useState("");
-	const { token } = useContext(ContextProvider);
+  const { id } = useParams();
+  
+  const navigate = useNavigate();
+  // State management
+  const [product, setProduct] = useState(null);
+  const [activeImage, setActiveImage] = useState("");
+  const [loading, setLoading] = useState(true);
 
-	const getSingleItem = async () => {
-		try {
-			const res = await axios.get(`${SERVER_URL}/product/${_id}`);
-			setSingleProduct(res.data.product);
-			localStorage.setItem("category", res.data.product.category);
-			console.log(res.data.product.category);
-		} catch (error) {
-			console.log(error);
-		}
-	};
+  // Get token and URL from context (as per your old code)
+  const { token } = useContext(ContextProvider);
 
-	useEffect(() => {
-		if (singleProduct && singleProduct.product_image.length > 0) {
-			setSingleImage(singleProduct.product_image[0]);
-		}
-	}, [singleProduct]);
+  // 🔹 FETCH PRODUCT FROM MYSQL BACKEND
+  const fetchSingleProduct = async () => {
+    try {
+      setLoading(true);
+      // Using the local MySQL endpoint you provided in 'new'
+      const res = await axios.get(`http://localhost:8000/api/products/${id}/`);
+      
+      const productData = res.data;
+      setProduct(productData);
 
-	useEffect(() => {
-		getSingleItem();
-	}, [_id]);
+      // Set initial active image logic
+      const firstImage = Array.isArray(productData.product_image)
+        ? productData.product_image[0]
+        : productData.image;
+      
+      setActiveImage(firstImage);
 
-	const addToCart = async () => {
-		try {
-			const res = await axios.post(
-				"https://croma-server.onrender.com/add-to-cart",
-				{
-					productId: _id,
-					quantity: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`
-					}
-				}
-			);
-			if (res.data.success) {
-				alert("Product added to cart");
-			} else {
-				alert("Failed to add to cart");
-			}
-		} catch (error) {
-			console.error("Error adding product to cart:", error.response ? error.response.data : error.message);
-			alert("An error occurred. Please try again.");
-		}
-	};
+      // Optional: Store category for recommendations (from old code)
+      if (productData.category) {
+        localStorage.setItem("category", productData.category);
+      }
 
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	const {
-		product_title = "",
-		price = 0,
-		product_description = "",
-		product_image = [],
-		banner_image = [],
-		product_color = "",
-		rating = 0,
-		reviews = 0,
-		brand = "",
-	} = singleProduct || {};
+  // 🔹 ADD TO CART FUNCTION (Restored from Old)
+  const addToCart = async () => {
+    if (!token) {
+      alert("Please login to add items to cart");
+      return;
+    }
 
-	if (!singleProduct) {
-		return <div className="container h-96 w-auto flex justify-center items-center"><Loading text={"Loading..."} /></div>;
-	}
+    try {
+      const res = await axios.post(
+        "https://croma-server.onrender.com/add-to-cart", // Keeping your production cart URL
+        {
+          productId: id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-	return (
-		<div className="container py-4">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div className="flex flex-col gap-16">
-					<div className="flex gap-4">
-						<div className="flex gap-4 flex-col">
-							{product_image.map((e, index) => (
-								<button
-									key={index}
-									className="border border-gray-50 hover:border-green-700 rounded-sm hover:border-2 p-1"
-									onClick={() => setSingleImage(e)}
-								>
-									<img className="w-20 h-20" src={e} alt={`Thumbnail ${index}`} />
-								</button>
-							))}
-						</div>
-						<div className="ml-8">
-							<img src={singleImage} className="w-80" alt="product_image" />
-						</div>
-					</div>
-					<div className="w-full flex gap-8">
-						<Button w={"full"} colorScheme="green">Buy Now</Button>
-						<Button w={"full"} colorScheme="grey" borderWidth={"1px"} onClick={addToCart}>Add To Cart</Button>
-					</div>
-				</div>
-				<div className="flex flex-col gap-4">
-					<h1 className="text-xl font-bold">{product_title}</h1>
-					<p className="text-green-500 text-sm font-semibold">{rating} <span>&#9733;</span>&nbsp;
-						<span className="underline">({rating} Rating & {reviews} Reviews)</span></p>
-					<div>
-						<h1 className="text-2xl font-extrabold">{price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</h1>
-						<p className="text-xs">(Inclusive of all taxes)</p>
-					</div>
-					<div>
-						<h3 className="w-full border-b-2">Super Saving (2 OFFERS)</h3>
-						<div className="flex flex-col gap-4 my-4 text-xs">
-							<p>Buy & Get Rs.500 off (Discount auto applied in cart)</p>
-							<p>Buy Select Croma LED & Get Croma Bluetooth Home Theatre @ Rs.4499/-</p>
-						</div>
-						<div>
-							<img className="w-full" src="https://media-ik.croma.com/prod/https://media.croma.com/image/upload/v1723097584/Croma%20Assets/CMS/LP%20Page%20Banners/2024/Independence%20Day%20Sale/PDP_ZipCare_8Aug2024_zwujhs.png" alt="offer_banner" />
-						</div>
-					</div>
-					<div className="flex gap-8">
-						<Button w={"fit-content"} bg={'none'} textColor={"white"} borderWidth={2}>{brand}</Button>
-						<Button w={"fit-content"} bg={'none'} textColor={"white"} borderWidth={2}>{product_color}</Button>
-					</div>
-					<div className="border border-gray-300 p-4 rounded-md">
-						<span className="font-semibold">Key Feauters: </span><br />
-						<p className="text-sm mt-2">{product_description}</p>
-					</div>
-				</div>
+      if (res.data.success) {
+        alert("Product added to cart ✅");
+      } else {
+        alert("Failed to add to cart ❌");
+      }
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      alert("Something went wrong 😕");
+    }
+  };
+
+  useEffect(() => {
+    fetchSingleProduct();
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  if (loading || !product) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-zinc-400">
+        <div className="animate-pulse">Loading Product...</div>
+      </div>
+    );
+  }
+
+  // 🔹 DESTRUCTURE FOR UI
+  const {
+    name,
+    price,
+    description,
+    product_image = [],
+    banner_image = [],
+    rating = 0,
+    reviews = 0,
+    brand = "",
+    product_color = "",
+    in_stock = true,
+  } = product;
+
+  const images = Array.isArray(product_image) ? product_image : [product_image];
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 pb-20 pt-8">
+      <div className="container mx-auto px-4">
+        
+        {/* BACK NAVIGATION */}
+        <Link to={-1} className="text-zinc-500 hover:text-emerald-400 text-sm inline-flex items-center gap-2 mb-6">
+          ← Back to Products
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          {/* LEFT - IMAGE GALLERY */}
+          <div>
+            <div className="h-[450px] bg-zinc-800 rounded-2xl flex items-center justify-center p-6 border border-zinc-700/50">
+              <img
+                src={activeImage}
+                alt={name}
+                className="w-full h-full object-contain"
+                onError={(e) => { e.target.src = "https://via.placeholder.com/400"; }}
+              />
+            </div>
+
+            {images.length > 1 && (
+              <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImage(img)}
+                    className={`h-20 w-20 flex-shrink-0 p-2 rounded-xl border transition-all ${
+                      activeImage === img ? "border-emerald-500 bg-zinc-800" : "border-zinc-700 bg-zinc-900"
+                    }`}
+                  >
+                    <img src={img} alt="thumb" className="w-full h-full object-contain" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT - PRODUCT DETAILS */}
+          <div className="flex flex-col gap-6">
+            <div>
+              <h1 className="text-3xl font-bold">{name}</h1>
+              <div className="flex items-center gap-3 mt-2">
+                {rating > 0 && (
+                  <span className="bg-emerald-500 text-black px-2 py-1 rounded text-sm font-bold">
+                    {rating} ★
+                  </span>
+                )}
+                <span className="text-zinc-400 text-sm">({reviews} Reviews)</span>
+                {brand && <span className="text-zinc-500 uppercase text-xs tracking-widest">{brand}</span>}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+			<div className="flex items-end gap-3">
+				{/* ACTUAL PRICE */}
+				<h2 className="text-4xl font-bold text-white">
+				₹{Number(price).toLocaleString("en-IN")}
+				</h2>
+
+				{/* DELETED / MRP PRICE */}
+				<span className="text-lg text-zinc-500 line-through">
+				₹{Math.round(price * 1.2).toLocaleString("en-IN")}
+				</span>
 			</div>
-			<div className="border-2 my-8 p-2 rounded-lg">
-				<h1 className="text-xl font-bold my-4 w-full border-b-2">Product Overview</h1>
-				{
-					banner_image.map((e, index) => {
-						return (
-							<div key={index}>
-								<img className="w-full" src={e} alt="" />
-							</div>
-						)
-					})
-				}
+
+			{/* INACTIVE DESCRIPTION */}
+			<p className="text-xs text-zinc-500">
+				Inclusive of all taxes · Limited time offer
+			</p>
 			</div>
-		</div>
-	);
+
+
+            {/* ACTION BUTTONS */}
+            <div className="flex gap-4">
+             <button 
+			onClick={() => navigate("/payment", { state: { product } })}
+			className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black py-3 rounded-xl font-bold transition-colors"
+			>
+			Buy Now
+			</button>
+              <button
+                onClick={addToCart}
+                disabled={!in_stock}
+                className={`flex-1 py-3 rounded-xl border font-semibold transition-all ${
+                  in_stock 
+                    ? "bg-zinc-800 border-zinc-700 hover:bg-zinc-700 text-white" 
+                    : "bg-zinc-900 border-zinc-800 text-zinc-600 cursor-not-allowed"
+                }`}
+              >
+                {in_stock ? "Add to Cart" : "Out of Stock"}
+              </button>
+            </div>
+
+            {/* FEATURES & DESCRIPTION */}
+            <div className="bg-zinc-900/50 border border-zinc-800 p-5 rounded-xl">
+              <h3 className="font-semibold mb-2 text-emerald-400">Key Features</h3>
+              <p className="text-sm text-zinc-400 whitespace-pre-line leading-relaxed">
+                {description || "No description available for this product."}
+              </p>
+              {product_color && (
+                <div className="mt-4 pt-4 border-t border-zinc-800">
+                   <p className="text-sm text-zinc-300">
+                    <span className="text-zinc-500">Color:</span> {product_color}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* PROMOTIONAL BANNERS */}
+        {banner_image.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-2xl font-bold text-center mb-8">
+              Product <span className="text-emerald-400">Overview</span>
+            </h2>
+            <div className="flex flex-col gap-6">
+              {banner_image.map((img, i) => (
+                <img key={i} src={img} className="rounded-2xl w-full shadow-2xl" alt="overview" />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default SingleItem;

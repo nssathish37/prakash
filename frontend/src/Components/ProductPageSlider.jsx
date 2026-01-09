@@ -151,7 +151,7 @@ function ProductPageSlider() {
                       onClick={() => handleAddToCart(product)}
                     >
                    
-                      {cart.includes(product.id) ? "Added!" : "Add to Cart"}
+                      {cart.includes(product.id) ? "Added!" : "Add to Cart test"}
                     </button>
                   </div>
                 </div>

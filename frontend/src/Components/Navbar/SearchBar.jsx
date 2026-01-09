@@ -1,6 +1,5 @@
 import { CiSearch } from "react-icons/ci";
 import { useState } from "react";
-import ProductCard from "../ProductCard";
 
 /* DEMO CATEGORIES */
 const categories = [

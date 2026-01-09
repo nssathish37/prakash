@@ -1,8 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import ProductCard from "./ProductCard"
-import { SERVER_URL } from "../App"
+import { SERVER_URL } from "../config";
 import Loading from "./Loading"
 
 const ProductPage = () => {

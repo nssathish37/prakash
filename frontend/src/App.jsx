@@ -2,10 +2,19 @@ import { useLocation } from "react-router-dom";
 import Footer from "./Components/Footer/Footer";
 import Navbar from "./Components/Navbar/Navbar";
 import AllRoutes from "./Routes/AllRoutes";
+import { useContext } from "react";
+import { ContextProvider } from "./Context/Context";
 
-export const SERVER_URL = "https://croma-server.onrender.com";
+
+// export const SERVER_URL = "https://croma-server.onrender.com";
+
+
 
 const App = () => {
+
+  const { loading } = useContext(ContextProvider);
+  if (loading) return null; // or loader
+
   const location = useLocation();
 
   // 🔹 hide navbar & footer for admin page

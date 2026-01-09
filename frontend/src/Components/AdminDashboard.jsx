@@ -43,6 +43,7 @@ export default function AdminDashboard() {
   reviews_count: 0,
   image_url: "",
   is_active: true,
+  is_best_product: false, 
   created_at: new Date().toISOString().split('T')[0] // Default to today
 });
   
@@ -114,14 +115,22 @@ export default function AdminDashboard() {
 
     const method = isEditing ? "PUT" : "POST";
 
-    // ✅ CREATE FORMDATA
-    const form = new FormData();
+   // ✅ CREATE FORMDATA
+const form = new FormData();
 
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null && formData[key] !== undefined) {
-        form.append(key, formData[key]);
+Object.keys(formData).forEach((key) => {
+  if (formData[key] !== null && formData[key] !== undefined) {
+    // Only append the image if it's a File (new upload)
+    if (key === "image") {
+      if (formData.image instanceof File) {
+        form.append("image", formData.image);
       }
-    });
+    } else {
+      form.append(key, formData[key]);
+    }
+  }
+});
+
 
     const res = await fetch(url, {
       method,
@@ -257,10 +266,7 @@ const handleLogout = () => {
           
           <div className="flex items-center gap-6">
            
-            <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full">
-              <Bell size={20}/>
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
-            </button>
+            
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-bold">{user.name}</p>
@@ -384,46 +390,56 @@ const handleLogout = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {filteredProducts.map((p) => (
-                      <tr key={p.id} className="group hover:bg-slate-50/50 transition-colors">
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-4">
-                            <img src={p.image_url} className="h-12 w-12 rounded-xl object-cover bg-slate-100 border border-slate-100" onError={(e) => e.target.src="https://via.placeholder.com/100"} alt=""/>
-                            <div>
-                              <p className="font-bold text-slate-900 leading-tight">{p.name}</p>
-                              <p className="text-[10px] font-bold text-indigo-500 mt-1 uppercase">ID: {p.id}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5">
-                          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider">{p.category}</span>
-                        </td>
-                        <td className="px-6 py-5 font-bold text-slate-800">${p.price}</td>
-                        <td className="px-6 py-5">
-                          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase ${p.in_stock ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${p.in_stock ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                            {p.in_stock ? 'Ready' : 'Out'}
-                          </span>
-                        </td>
-                        <td className="px-8 py-5 text-right">
-                          <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => handleEditClick(p)}
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
-                              >
-                                <Edit3 size={16}/>
-                              </button>
-                                <button
-                                  onClick={() => handleDeleteProduct(p.id)}
-                                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-                                >
-                                <Trash2 size={16}/>
-                              </button>                       
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+  {filteredProducts.map((p) => {
+    // 🔹 CHANGE 1: Create a variable to check if stock is greater than 0
+    const isReady = Number(p.stock) > 0; 
+
+    return (
+      <tr key={p.id} className="group hover:bg-slate-50/50 transition-colors">
+        <td className="px-8 py-5">
+          <div className="flex items-center gap-4">
+            
+            {/* 🔹 CHANGE 2: Change p.image_url to p.image */}
+            <img 
+              src={p.image} 
+              className="h-12 w-12 rounded-xl object-cover bg-slate-100 border border-slate-100" 
+              onError={(e) => e.target.src="https://via.placeholder.com/100"} 
+              alt=""
+            />
+            
+            <div>
+              <p className="font-bold text-slate-900 leading-tight">{p.name}</p>
+              <p className="text-[10px] font-bold text-indigo-500 mt-1 uppercase">ID: {p.id}</p>
+            </div>
+          </div>
+        </td>
+        <td className="px-6 py-5">
+          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider">{p.category}</span>
+        </td>
+        <td className="px-6 py-5 font-bold text-slate-800">${p.price}</td>
+        <td className="px-6 py-5">
+          
+          {/* 🔹 CHANGE 3: Use the 'isReady' variable instead of 'p.in_stock' */}
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase ${isReady ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${isReady ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+            {isReady ? 'Ready' : 'Out'}
+          </span>
+
+        </td>
+        <td className="px-8 py-5 text-right">
+          <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={() => handleEditClick(p)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg">
+              <Edit3 size={16}/>
+            </button>
+            <button onClick={() => handleDeleteProduct(p.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg">
+              <Trash2 size={16}/>
+            </button>                       
+          </div>
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
                 </table>
               </div>
             </div>
@@ -524,7 +540,7 @@ const handleLogout = () => {
       onChange={(e) =>
         setFormData({
           ...formData,
-          image: e.target.files[0], // 👈 FILE OBJECT
+          image: e.target.files[0], //  FILE OBJECT
         })
       }
     />
@@ -555,6 +571,40 @@ const handleLogout = () => {
             {formData.is_active ? "LIVE" : "DRAFT"}
           </span>
         </div>
+
+        <div className="flex items-center justify-between p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="is_best_product"
+              className="h-5 w-5 rounded-lg accent-amber-500"
+              checked={formData.is_best_product}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  is_best_product: e.target.checked,
+                })
+              }
+            />
+            <label
+              htmlFor="is_best_product"
+              className="text-sm font-black text-slate-700 uppercase tracking-wider cursor-pointer"
+            >
+              Best Product (Show on Home)
+            </label>
+          </div>
+
+          <span
+            className={`text-[10px] font-black px-3 py-1 rounded-full ${
+              formData.is_best_product
+                ? "bg-amber-500 text-white"
+                : "bg-slate-300 text-white"
+            }`}
+          >
+            {formData.is_best_product ? "BEST" : "NORMAL"}
+          </span>
+        </div>
+
 
         <div className="flex gap-4 pt-4">
           <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-4 text-xs font-black uppercase text-slate-400 tracking-widest hover:text-slate-600 transition-colors">Cancel</button>

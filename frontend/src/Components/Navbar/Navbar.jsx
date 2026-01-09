@@ -9,15 +9,16 @@ import { AiOutlineLogout, AiOutlineLogin } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ContextProvider } from "../../Context/Context";
+import { ContextProvider } from "../../Context/Context"; // Ensure path is correct
 import Account from "../auth/Account";
 import axios from "axios";
-import ProductCard from "../ProductCard";
 import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuth, setIsAuth, token, setToken } = useContext(ContextProvider);
+  
+  // 🔹 Get cart and wishlist data from Context
+  const { isAuth, setIsAuth, token, setToken, cartItems, wishlistItems } = useContext(ContextProvider);
 
   const [isHovered, setIsHovered] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -31,7 +32,7 @@ const Navbar = () => {
 
   // --- DATA CONFIGURATION ---
   const brands = [
-    "Apple", "Atomberg", "Blue Star", "Bosch", "Butterfly", "Crompton",
+     "Atomberg", "Blue Star", "Bosch", "Butterfly", "Crompton",
     "Daikin", "Dell", "Haier", "Havells", "HP", "IFB", "LG", "Milton",
     "O'General", "Oppo", "Philips", "Pigeon", "Preethi", "Prestige",
     "Samsung", "Sony", "Sujata", "TCL", "Usha", "V-Guard", "Vivo",
@@ -45,7 +46,7 @@ const Navbar = () => {
     },
     {
       name: "Kitchen Appliances",
-      sub: ["Mixers", "Grinders", "Power Hobs", "Chimneys", "Tower Fans", "E-Rice Cookers", "E-Kettles"],
+      sub: ["Mixers", "Grinders", "Power Hobs", "Chimneys", "Tower Fans", "E-Rice Cookers", "E-Kettles", "Dish Washers"],
     },
   ];
 
@@ -66,7 +67,7 @@ const Navbar = () => {
     { icon: <FaRegUserCircle className="w-5 h-5" />, name: "My Profile", link: "/profile" },
     { icon: <FaRegAddressBook className="w-5 h-5" />, name: "My Address", link: "/address" },
     { icon: <LuCodesandbox className="w-5 h-5" />, name: "My Orders", link: "/" },
-    { icon: <FaRegHeart className="w-5 h-5" />, name: "My Wishlist", link: "/" },
+    { icon: <FaRegHeart className="w-5 h-5" />, name: "My Wishlist", link: "/wishlist" },
     { icon: <RiCustomerService2Line className="w-5 h-5" />, name: "Support Center", link: "/" },
   ];
 
@@ -139,7 +140,7 @@ const Navbar = () => {
                             {brands.map((brand) => (
                               <Link
                                 key={brand}
-                                to={`/brand/${brand.toLowerCase().replace(/\s+/g, '-')}`}
+                                   to={`/brand/${encodeURIComponent(brand)}`}
                                 onClick={() => setIsOpen(false)}
                                 className="px-3 py-2 text-[11px] text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
                               >
@@ -151,11 +152,11 @@ const Navbar = () => {
                       </div>
 
                       {/* STORE LOCATOR LINK */}
-                     <Link 
+                      <Link 
                         to="/about"
                         onClick={() => {
-                          setIsOpen(false);       // CLOSE DROPDOWN
-                          setOpenCategory(null); //  RESET ACCORDION (optional but recommended)
+                          setIsOpen(false);
+                          setOpenCategory(null);
                         }}
                         className="flex justify-between items-center px-4 py-3 hover:text-black hover:bg-emerald-400 rounded-md group transition-all"
                       >
@@ -184,16 +185,18 @@ const Navbar = () => {
                           {openCategory === cat.name && (
                             <div className="bg-black/40 mx-2 mb-2 rounded-md overflow-hidden">
                               {cat.sub.map((sub) => (
-                                <p
+                               <Link
                                   key={sub}
+                                  to={categoryRoutes[sub] || "/"}
                                   onClick={() => {
                                     setIsOpen(false);
-                                    navigate(categoryRoutes[sub] || "/");
+                                    setOpenCategory(null);
                                   }}
-                                  className="px-8 py-2 text-xs text-gray-400 hover:text-white hover:bg-gray-800 cursor-pointer transition-colors"
+                                  className="block px-8 py-2 text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
                                 >
                                   {sub}
-                                </p>
+                                </Link>
+
                               ))}
                             </div>
                           )}
@@ -226,15 +229,21 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* RIGHT ICONS */}
+          {/* 🔹 RIGHT ICONS (UPDATED WITH BADGES) */}
           <div className="flex items-center gap-3 md:gap-6">
 
             <button className="md:hidden" onClick={() => setMobileSearchOpen(!mobileSearchOpen)}>
               <CiSearch className="w-7 h-7" />
             </button>
 
-            <Link to="/wishlist" className="hover:text-teal-400 transition-colors">
+            {/* WISHLIST ICON & BADGE */}
+            <Link to="/wishlist" className="relative hover:text-teal-400 transition-colors">
               <FaRegHeart className="w-5 h-5" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {wishlistItems.length}
+                </span>
+              )}
             </Link>
 
             <div
@@ -287,8 +296,14 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link to="/cart" className="hover:text-teal-400 transition-colors">
+            {/* CART ICON & BADGE */}
+            <Link to="/cart" className="relative hover:text-teal-400 transition-colors">
               <FaShoppingCart className="w-5 h-5" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
             </Link>
           </div>
         </nav>
