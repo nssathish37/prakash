@@ -45,13 +45,21 @@ const Payment = () => {
   const deliveryCharges = 0;
   const totalPayable = subtotal + deliveryCharges;
 
-  const handlePayment = () => {
-    if (!address.fullAddress || !address.pincode) {
-      alert("Please fill delivery address 🏠");
-      return;
-    }
-    alert(`Redirecting to ${paymentMethod.toUpperCase()} payment gateway...`);
-  };
+ const handlePayment = async () => {
+  const res = await fetch("http://127.0.0.1:8000/api/create-order/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      amount: totalPayable,
+      name: address.name,
+      address: address.fullAddress,
+      pincode: address.pincode,
+    }),
+  });
+
+  const data = await res.json();
+  navigate("/upi-pay", { state: data });
+};
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 py-10">

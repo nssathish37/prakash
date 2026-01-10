@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'orders',   # new
 
     'accounts.apps.AccountsConfig',  # changed
     'products.apps.ProductsConfig',  # changed

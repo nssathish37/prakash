@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
-import ProductPage from "../Components/ProductPage";
 import SingleItem from "../Components/SingleItem";
 import PrivateRoute from "./PrivateRoute";
 
@@ -14,15 +13,21 @@ import AdminLogin from "../Components/auth/AdminLogin";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import Dashboard from "../Components/AdminDashboard";
 import About from "../pages/About";
+import AdminOrders from "../pages/AdminOrders";
 
-import ProductList from '../Components/ProductList'
 
+import ProductList from "../Components/ProductList";
 import BrandProducts from "../Components/BrandProducts";
 import CategoryProducts from "../Components/CategoryProducts";
-import Payment from "../Components/Payment" ;
- 
+
 import Wishlist from "../pages/Wishlist";
 import Cart from "../pages/Cart";
+
+import Payment from "../Components/Payment";
+import UpiPay from "../Components/UpiPay";
+import Success from "../pages/Success";
+import PaymentFailed from "../pages/PaymentFailed";
+
 
 import Contact from "../pages/info/Contact";
 import FAQs from "../pages/info/FAQs";
@@ -34,23 +39,19 @@ const AllRoutes = () => {
   return (
     <Routes>
 
-      {/* HOME */}
+      {/* PUBLIC */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/about" element={<About />} />
       <Route path="/productlist" element={<ProductList />} />
-      <Route path="/payment" element={<Payment />} />
       <Route path="/wishlist" element={<Wishlist />} />
-      <Route path="/cart" element={<Cart/>} />
 
       {/* PRODUCTS */}
       <Route path="/product/:id" element={<SingleItem />} />
       <Route path="/brand/:brandName" element={<BrandProducts />} />
       <Route path="/products/:category" element={<CategoryProducts />} />
-     
 
-         
-      {/* USER */}
+      {/* USER (PROTECTED) */}
       <Route
         path="/profile"
         element={
@@ -87,6 +88,14 @@ const AllRoutes = () => {
         }
       />
 
+      <Route path="/payment-failed" element={<PaymentFailed />} />
+
+
+      {/* PAYMENT FLOW */}
+      <Route path="/payment" element={<Payment />} />
+      <Route path="/upi-pay" element={<UpiPay />} />
+      <Route path="/success" element={<Success />} />
+
       {/* ADMIN */}
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route
@@ -98,6 +107,17 @@ const AllRoutes = () => {
         }
       />
 
+      <Route
+        path="/dashboard/orders"
+        element={
+          <AdminProtectedRoute>
+          <AdminOrders />
+          </AdminProtectedRoute>
+        }
+      />
+
+
+      {/* INFO */}
       <Route path="/contact" element={<Contact />} />
       <Route path="/faqs" element={<FAQs />} />
       <Route path="/buying-guide" element={<BuyingGuide />} />
