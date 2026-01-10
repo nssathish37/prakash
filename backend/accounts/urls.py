@@ -6,6 +6,7 @@ from .views import SendOTP, VerifyOTP, UserProfileView, UserAddressView, AdminLo
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='products')
 
+
 urlpatterns = [
     path("send-otp/", SendOTP.as_view(), name="send-otp"),
     path("verify-otp/", VerifyOTP.as_view(), name="verify-otp"),

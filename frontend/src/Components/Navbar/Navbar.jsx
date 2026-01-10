@@ -18,7 +18,15 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   
   // 🔹 Get cart and wishlist data from Context
-  const { isAuth, setIsAuth, token, setToken, cartItems, wishlistItems } = useContext(ContextProvider);
+const {
+  isAuth,
+  setIsAuth,
+  token,
+  setToken,
+  role,
+  cartItems,
+  wishlistItems,
+} = useContext(ContextProvider);
 
   const [isHovered, setIsHovered] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -38,17 +46,60 @@ const Navbar = () => {
     "Samsung", "Sony", "Sujata", "TCL", "Usha", "V-Guard", "Vivo",
     "Whirlpool", "Zebronics"
   ];
+    const categories = [
+      {
+        name: "Home Appliances",
+        sub: [
+          "Refrigerators",
+          "Washing Machines",
+          "Vacuum Cleaners",
+          "Air Conditioners",
+          "Air Coolers",
+          "Water Heaters",
+          "Solar Water Heaters",
+          "Room Heaters",
+        ],
+      },
+      {
+        name: "Kitchen Appliances",
+        sub: [
+          "Mixer Grinders",
+          "Wet Grinders",
+          "Induction Stoves",
+          "Gas Stoves",
+          "Water Purifiers",
+          "Blenders",
+          "Water Bottles",
+          "Flasks",
+          "Tawas",
+          "Appachetties",
+        ],
+      },
+      {
+        name: "Furniture",
+        sub: [
+          "Sofas",
+          "Corner Sofas",
+          "Recliners",
+          "Centre Tables",
+          "Dining Tables",
+          "Chairs",
+          "Cots",
+          "Mattresses",
+          "Ottomans",
+          "Pillows",
+          "Bed Sheets",
+          "Office Tables",
+          "Office Chairs",
+          "Executive Chairs",
+          "Plastic Chairs",
+          "Dressing Tables",
+          "Metal Wardrobes",
+          "Wooden Wardrobes",
+        ],
+      },
+    ];
 
-  const categories = [
-    {
-      name: "Home Appliances",
-      sub: ["Refrigerators", "Washing Machines", "Microwaves"],
-    },
-    {
-      name: "Kitchen Appliances",
-      sub: ["Mixers", "Grinders", "Power Hobs", "Chimneys", "Tower Fans", "E-Rice Cookers", "E-Kettles", "Dish Washers"],
-    },
-  ];
 
   const categoryRoutes = {
     Refrigerators: "/products/refrigerators",
@@ -68,8 +119,12 @@ const Navbar = () => {
     { icon: <FaRegAddressBook className="w-5 h-5" />, name: "My Address", link: "/address" },
     { icon: <LuCodesandbox className="w-5 h-5" />, name: "My Orders", link: "/" },
     { icon: <FaRegHeart className="w-5 h-5" />, name: "My Wishlist", link: "/wishlist" },
-    { icon: <RiCustomerService2Line className="w-5 h-5" />, name: "Support Center", link: "/" },
-  ];
+{ icon: <RiCustomerService2Line className="w-5 h-5" />, name: "Support Center", link: "tel:+919342916754" },  ];
+      
+      const closeUserMenu = () => {
+        setIsHovered(false);
+      };
+
 
   // --- LOGIC ---
   const fetchData = async () => {
@@ -92,12 +147,15 @@ const Navbar = () => {
     setWindow(value !== "");
   };
 
-  const handleLogout = () => {
-    setIsAuth(false);
-    setShowPopup(false);
-    localStorage.removeItem("access_token");
-    setToken(null);
-  };
+const handleLogout = () => {
+  setIsAuth(false);
+  setToken(null);
+  setShowPopup(false);
+
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("role"); // ✅ REQUIRED
+};
+
 
   return (
     <>
@@ -255,43 +313,77 @@ const Navbar = () => {
 
               {isHovered && (
                 <div className="absolute right-0 top-full bg-[#1a1a1a] p-2 w-64 z-50 shadow-2xl border border-gray-700 rounded-md">
-                  {dataForSidebar.map((e, i) => (
-                    <Link
-                      key={i}
-                      to={e.link}
-                      className="flex items-center gap-4 p-3 hover:bg-gray-800 rounded-md transition-all text-sm"
-                    >
-                      {e.icon}
-                      {e.name}
-                    </Link>
-                  ))}
+   {dataForSidebar.map((e, i) => {
+  if (e.link.startsWith("tel:")) {
+    return (
+      <a
+        key={i}
+        href={e.link}
+        onClick={closeUserMenu}   // ✅ ADD THIS
+        className="flex items-center gap-4 p-3 hover:bg-gray-800 rounded-md transition-all text-sm"
+      >
+        {e.icon}
+        {e.name}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      key={i}
+      to={e.link}
+      onClick={closeUserMenu}   // ✅ ADD THIS
+      className="flex items-center gap-4 p-3 hover:bg-gray-800 rounded-md transition-all text-sm"
+    >
+      {e.icon}
+      {e.name}
+    </Link>
+  );
+})}
+
 
                   <hr className="border-gray-700 my-2" />
 
                   {token && isAuth ? (
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-3 w-full p-3 hover:bg-red-900/20 text-red-400 text-sm"
-                    >
-                      <AiOutlineLogout /> Logout
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => setShowPopup(true)}
-                        className="flex items-center gap-3 w-full p-3 hover:bg-teal-900/20 text-teal-400 text-sm font-semibold"
-                      >
-                        <AiOutlineLogin /> User Login
-                      </button>
+  <>
+    {/* ✅ ADMIN DASHBOARD LINK (ADMIN ONLY) */}
+    {role === "admin" && (
+      <Link
+        to="/dashboard"
+        className="flex items-center gap-3 w-full p-3 hover:bg-purple-900/20 text-purple-400 text-sm font-semibold"
+      >
+        <FaUserShield /> Dashboard
+      </Link>
+    )}
 
-                      <Link
-                        to="/admin-login"
-                        className="flex items-center gap-3 w-full p-3 hover:bg-purple-900/20 text-purple-400 text-sm font-semibold"
-                      >
-                        <FaUserShield /> Admin Login
-                      </Link>
-                    </>
-                  )}
+    {/* LOGOUT */}
+    <button
+      onClick={handleLogout}
+      className="flex items-center gap-3 w-full p-3 hover:bg-red-900/20 text-red-400 text-sm"
+    >
+      <AiOutlineLogout /> Logout
+    </button>
+  </>
+) : (
+  <>
+    {/* USER LOGIN */}
+    <button
+      onClick={() => setShowPopup(true)}
+      className="flex items-center gap-3 w-full p-3 hover:bg-teal-900/20 text-teal-400 text-sm font-semibold"
+    >
+      <AiOutlineLogin /> User Login
+    </button>
+
+    {/* ADMIN LOGIN */}
+    <Link
+      to="/admin-login"
+      className="flex items-center gap-3 w-full p-3 hover:bg-purple-900/20 text-purple-400 text-sm font-semibold"
+    >
+      <FaUserShield /> Admin Login
+    </Link>
+  </>
+)}
+
                 </div>
               )}
             </div>

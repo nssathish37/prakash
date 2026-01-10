@@ -96,9 +96,7 @@ const CategoryProducts = () => {
             {[
               { key: "price", label: "Price" },
               { key: "rating", label: "Rating" },
-              { key: "availability", label: "Availability" },
               { key: "sort", label: "Sort" },
-              { key: "all", label: "All Filters" },
             ].map((item) => (
               <button
                 key={item.key}
@@ -159,31 +157,7 @@ const CategoryProducts = () => {
                 </div>
               )}
 
-              {/* AVAILABILITY */}
-              {activeFilter === "availability" && (
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setAvailability("in")}
-                    className={`px-4 py-2 rounded-full ${
-                      availability === "in"
-                        ? "bg-emerald-500 text-black"
-                        : "bg-zinc-800"
-                    }`}
-                  >
-                    In Stock
-                  </button>
-                  <button
-                    onClick={() => setAvailability("out")}
-                    className={`px-4 py-2 rounded-full ${
-                      availability === "out"
-                        ? "bg-emerald-500 text-black"
-                        : "bg-zinc-800"
-                    }`}
-                  >
-                    Out of Stock
-                  </button>
-                </div>
-              )}
+           
 
               {/* SORT */}
               {activeFilter === "sort" && (
@@ -204,11 +178,7 @@ const CategoryProducts = () => {
               )}
 
               {/* ALL FILTERS */}
-              {activeFilter === "all" && (
-                <div className="text-zinc-400 text-sm ">
-                  More filters can be added here later
-                </div>
-              )}
+              
             </div>
           )}
         </div>

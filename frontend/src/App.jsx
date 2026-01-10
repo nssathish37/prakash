@@ -5,20 +5,13 @@ import AllRoutes from "./Routes/AllRoutes";
 import { useContext } from "react";
 import { ContextProvider } from "./Context/Context";
 
-
-// export const SERVER_URL = "https://croma-server.onrender.com";
-
-
-
 const App = () => {
-
-  const { loading } = useContext(ContextProvider);
-  if (loading) return null; // or loader
-
   const location = useLocation();
+  const { role } = useContext(ContextProvider);
 
-  // 🔹 hide navbar & footer for admin page
-  const hideLayout = location.pathname.startsWith("/dashboard");
+  // ✅ Hide layout ONLY for admin dashboard
+  const hideLayout =
+    role === "admin" && location.pathname.startsWith("/dashboard");
 
   return (
     <>

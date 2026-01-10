@@ -121,13 +121,19 @@ const form = new FormData();
 Object.keys(formData).forEach((key) => {
   if (formData[key] !== null && formData[key] !== undefined) {
     // Only append the image if it's a File (new upload)
-    if (key === "image") {
-      if (formData.image instanceof File) {
-        form.append("image", formData.image);
-      }
-    } else {
+   Object.keys(formData).forEach((key) => {
+  if (formData[key] !== null && formData[key] !== undefined) {
+    if (
+      ["image_1", "image_2", "image_3"].includes(key) &&
+      formData[key] instanceof File
+    ) {
+      form.append(key, formData[key]);
+    } else if (!["image_1", "image_2", "image_3"].includes(key)) {
       form.append(key, formData[key]);
     }
+  }
+});
+
   }
 });
 
@@ -401,7 +407,7 @@ const handleLogout = () => {
             
             {/* 🔹 CHANGE 2: Change p.image_url to p.image */}
             <img 
-              src={p.image} 
+              src={p.image_1} 
               className="h-12 w-12 rounded-xl object-cover bg-slate-100 border border-slate-100" 
               onError={(e) => e.target.src="https://via.placeholder.com/100"} 
               alt=""
@@ -526,39 +532,41 @@ const handleLogout = () => {
               value={formData.created_at} onChange={(e) => setFormData({...formData, created_at: e.target.value})} />
           </div>
         </div>
-<div className="space-y-1">
+<div className="space-y-2">
   <label className="text-[10px] font-black uppercase text-slate-400 ml-1">
-    Product Image
+    Product Images (Max 3)
   </label>
 
-  <div className="flex items-center gap-3">
-    {/* File Input */}
-    <input
-      type="file"
-      accept="image/*"
-      className="flex-1 rounded-xl bg-slate-100 border-none p-3 text-sm font-bold cursor-pointer"
-      onChange={(e) =>
-        setFormData({
-          ...formData,
-          image: e.target.files[0], //  FILE OBJECT
-        })
-      }
-    />
-
-    {/* Preview */}
-    {formData.image && (
-      <img
-        src={
-          typeof formData.image === "string"
-            ? `http://localhost:8000${formData.image}` // edit mode
-            : URL.createObjectURL(formData.image) // new upload
+  {["image_1", "image_2", "image_3"].map((key, index) => (
+    <div key={key} className="flex items-center gap-3">
+      <input
+        type="file"
+        accept="image/*"
+        className="flex-1 rounded-xl bg-slate-100 border-none p-3 text-sm font-bold cursor-pointer"
+        onChange={(e) =>
+          setFormData({
+            ...formData,
+            [key]: e.target.files[0],
+          })
         }
-        className="w-11 h-11 rounded-lg object-cover border"
-        alt="preview"
       />
-    )}
-  </div>
+
+      {/* IMAGE PREVIEW */}
+      {formData[key] && (
+        <img
+          src={
+            typeof formData[key] === "string"
+              ? `http://localhost:8000${formData[key]}`
+              : URL.createObjectURL(formData[key])
+          }
+          className="w-12 h-12 rounded-lg object-cover border"
+          alt={`preview-${index + 1}`}
+        />
+      )}
+    </div>
+  ))}
 </div>
+
 
 
         <div className="flex items-center justify-between p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">

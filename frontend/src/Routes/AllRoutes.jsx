@@ -24,6 +24,11 @@ import Payment from "../Components/Payment" ;
 import Wishlist from "../pages/Wishlist";
 import Cart from "../pages/Cart";
 
+import Contact from "../pages/info/Contact";
+import FAQs from "../pages/info/FAQs";
+import BuyingGuide from "../pages/info/BuyingGuide";
+import ReturnPolicy from "../pages/info/ReturnPolicy";
+import StoreLocator from "../pages/info/StoreLocator";
 
 const AllRoutes = () => {
   return (
@@ -92,6 +97,12 @@ const AllRoutes = () => {
           </AdminProtectedRoute>
         }
       />
+
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/faqs" element={<FAQs />} />
+      <Route path="/buying-guide" element={<BuyingGuide />} />
+      <Route path="/return-policy" element={<ReturnPolicy />} />
+      <Route path="/store-locator" element={<StoreLocator />} />
 
     </Routes>
   );

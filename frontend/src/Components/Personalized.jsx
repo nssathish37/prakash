@@ -1,12 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { ContextProvider } from "../Context/Context"; // 1. Import Context
+import { ContextProvider } from "../Context/Context";
 
 const Personalized = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 2. Get the functions from your Context
   const { addToCart, addToWishlist } = useContext(ContextProvider);
 
   useEffect(() => {
@@ -28,18 +27,47 @@ const Personalized = () => {
     fetchRandomProducts();
   }, []);
 
+  // ✅ HELPER: Convert relative path to full URL
+  const toFullImageUrl = (img) => {
+    if (!img) return null;
+    if (img.startsWith("http")) return img;
+    const cleanPath = img.startsWith("/") ? img : `/${img}`;
+    return `http://localhost:8000${cleanPath}`;
+  };
+
+  // ✅ HELPER: Get the first available image from the product object
+  const getProductImage = (product) => {
+    // Check image_1, then image_2, then image_3
+    const rawImage = product.image_1 || product.image_2 || product.image_3;
+    return toFullImageUrl(rawImage);
+  };
+
   // 3. Updated Handler for Wishlist
   const handleAddToWishlist = (e, product) => {
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
-    addToWishlist(product); // Call context function
+    
+    // Ensure the product added to context has the correct 'image' property
+    const itemToAdd = {
+        ...product,
+        image: getProductImage(product)
+    };
+    
+    addToWishlist(itemToAdd);
   };
 
   // 4. Updated Handler for Cart
   const handleAddToCart = (e, product) => {
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
-    addToCart(product); // Call context function
+    
+    // Ensure the product added to context has the correct 'image' property
+    const itemToAdd = {
+        ...product,
+        image: getProductImage(product)
+    };
+
+    addToCart(itemToAdd);
   };
 
   if (loading || !data.length) return null;
@@ -67,24 +95,23 @@ const Personalized = () => {
         {/* HORIZONTAL SCROLL */}
         <div className="flex gap-3 sm:gap-6 overflow-x-auto no-scrollbar pb-4">
           {data.map((product) => {
+            // 🔹 Destructure correctly based on your Django Model
             const {
               id,
               name,
               price,
               rating = 0,
-              image,
               description,
             } = product;
+
+            // 🔹 Get the image using the helper function
+            const displayImage = getProductImage(product);
 
             return (
               <div key={id} className="relative group shrink-0 snap-start">
                 <Link to={`/product/${id}`}>
                   <div className="relative w-[165px] sm:w-64 bg-[#121212] border border-white/5 rounded-xl sm:rounded-2xl p-2 sm:p-4 hover:bg-white/10 transition-all flex flex-col min-h-[280px] sm:min-h-[400px]">
                     
-                    {/* 🔹 CHANGES MADE HERE:
-                        1. Removed 'opacity-0' and 'group-hover:opacity-100' to make them always visible.
-                        2. Added 'backdrop-blur-md' for better visibility over images.
-                    */}
                     <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
                       
                       {/* Wishlist Button */}
@@ -93,19 +120,8 @@ const Personalized = () => {
                         className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-red-500 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
                         title="Add to Wishlist"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          className="w-4 h-4 sm:w-5 sm:h-5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                         </svg>
                       </button>
 
@@ -115,31 +131,24 @@ const Personalized = () => {
                         className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-emerald-600 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
                         title="Add to Cart"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          className="w-4 h-4 sm:w-5 sm:h-5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                         </svg>
                       </button>
                     </div>
 
                     {/* IMAGE */}
                     <div className="h-32 sm:h-52 flex items-center justify-center mb-2 sm:mb-4">
-                      {image && (
+                      {/* 🔹 Use the processed displayImage here */}
+                      {displayImage ? (
                         <img
-                          src={image}
+                          src={displayImage}
                           alt={name}
                           className="max-h-full object-contain transition-transform group-hover:scale-105"
+                          onError={(e) => e.target.src = "https://via.placeholder.com/150"}
                         />
+                      ) : (
+                         <div className="text-zinc-500 text-xs">No Image</div>
                       )}
                     </div>
 
